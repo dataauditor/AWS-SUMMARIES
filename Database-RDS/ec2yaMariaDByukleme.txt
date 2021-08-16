@@ -1,0 +1,65 @@
+1.Amazon RDS'in calistirdigi SQL'ler:
+  - MySQL
+  - Mariadb
+  - PostgreSQL
+
+2.Mariadb'ye baglanma:
+  ec2 ac > visual sc'den ssh baglan > 
+    sudo yum update -y                     : guncelleme
+    sudo yum install mariadb-server -y     : mariadb yukle
+    sudo systemctl start mariadb           : baslat
+    sudo systemctl enable mariadb          : 
+    sudo systemctl status mariadb           
+    mysql -u root                          : "-u": user root: root user hesabina gir
+    SHOW DATABASES;                        : kurulu gelen databases 4 tane mevcut.
+    USE mysql;                             : SHOW DATABASES ile gozuken 4 database'den mysql databaseine baglanti kurduk.
+    SHOW TABLES;                           : hazir table'lari gosterir.
+    SELECT Host, User, Password FROM user; : user klasoru icindeki kolumlari gosterir.
+    mysql ip-172-31-80-111.ec2.internal -u root: baska sekilde girilir. yukarda verilen IP ile girdik.
+    Ctrl + c
+    sudo mysql_secure_installation         : sifre girilir. kurulum yapilir. tum sorular: y
+    mysql -u root -p                       : sifre ile db'ye girme talebi.
+    USE mysql;                             : mysql db'ye girdik.
+    CREATE USER clarususer IDENTIFIED BY 'clarus1234';    : yeni kullanici tanimlama    
+    CREATE DATABASE clarusdb;              : yeni db olusturduk.
+    SHOW DATABASES;                        : yeni db'yi gorduk.
+    GRANT ALL ON clarusdb.* TO clarususer IDENTIFIED BY 'clarus1234' WITH GRANT OPTION; : bir db'ye bir user'i yetkilendirme.
+    FLUSH PRIVILEGES;                      : Yetkilendirme.
+    ctrl + c
+    mysql -u clarususer -p
+    SHOW DATABASES;
+    USE clarusdb;
+    SHOW TABLES;
+
+CREATE TABLE `offices` (
+  `office_id` int(11) NOT NULL,
+  `address` varchar(50) NOT NULL,
+  `city` varchar(50) NOT NULL,
+  `state` varchar(50) NOT NULL,
+  PRIMARY KEY (`office_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+    SHOW TABLES;
+    
+INSERT INTO `offices` VALUES (1,'03 Reinke Trail','Cincinnati','OH');
+INSERT INTO `offices` VALUES (2,'5507 Becker Terrace','New York City','NY');
+INSERT INTO `offices` VALUES (3,'54 Northland Court','Richmond','VA');
+INSERT INTO `offices` VALUES (4,'08 South Crossing','Cincinnati','OH');
+INSERT INTO `offices` VALUES (5,'553 Maple Drive','Minneapolis','MN');
+INSERT INTO `offices` VALUES (6,'23 North Plaza','Aurora','CO');
+INSERT INTO `offices` VALUES (7,'9658 Wayridge Court','Boise','ID');
+INSERT INTO `offices` VALUES (8,'9 Grayhawk Trail','New York City','NY');
+INSERT INTO `offices` VALUES (9,'16862 Westend Hill','Knoxville','TN');
+INSERT INTO `offices` VALUES (10,'4 Bluestem Parkway','Savannah','GA');
+
+    SELECT * FROM offices;
+    ctrl + c
+
+3.Client'in Mariadb yuklu instance ile baglantisi icin Client'in 22 portu acik olmali ki kurulumu uzaktan yapabilelim.
+   sudo apt update && sudo apt upgrade -y  : ubuntu makine update edilir.
+   sudo apt-get install mariadb-client -y  : sql-client yuklenir.
+   
+    
+4.Mariadb instance'e MySQL Workbench ile de ulasilabilir.
+    root'u uzaktan kullanima kapatsak bile diger kullanicilar baglanabilir.
+    Hostname: ec2 instance DNS adresi
+    username: db'deki tanimli userlardan herhangi biri ve sifresi

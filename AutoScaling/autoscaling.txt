@@ -1,0 +1,26 @@
+1.scale out: yeni makine acma
+  scale in: makine kapatma
+
+2.Launch Template veya launch Configurations ile yani makineler tanimlanir.
+  Fault tolerance
+  Load balancer ile kullanilabilir.
+
+3.Auto scalingin calisma sureci:
+  Auto scaling > Launch template/launc configuration > create auto scaling groups > scaling option
+
+4.Auto scalingteki policy bekleme suresi health check bekleme suresinden fazla olmaliki duruma gore yeni makinein durumu degerlendirilsin. bu kapsamda her policy bekleme suresinde ancak belirlenen add ve remove adetleri kadar islem yapar. Dilerse tum cihazlar %100'e ulassin.
+
+5.Auto Scaling Olusturma:
+  Target grup olustur ama icine instance register edilmez/olusturulmaz.
+  Load balancer olustur ve icine ilgili target grupu ve 80/22 port sg ekle.
+  Launch template olustur ve icine AMI, instance type belirle.
+  Auto scaling grup olustur.
+    -template'i sec
+    -tum subnetleri sec
+    -mevcut load balanceri seceneginden mevcut target grubu sec.
+    -Health check'ten ELB'yi sec.
+    -Grup size'i ayarla.
+    -olustur.
+    -Olustuktan sonra Edit ile degisiklikler yapabilirsin.
+    -Cloudwatch alarm > ec2 > by auto scaling grup > CPUUtilization > add/remove > greater/lower > 30-90 > create   
+    -AutoScaling grup seciliyken Automatic scaling > Create dynamic scaling policy > Step scaling > create Cloudwatch alarm secilir. > Add/remove >  
