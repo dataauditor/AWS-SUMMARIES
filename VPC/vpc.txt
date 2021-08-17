@@ -12,8 +12,10 @@
 - Subnetlere IP'ler, Crdir vererek olustururuz. Her AZ'de istenilen kadar Subnet kurukabilir. Privat ve Public olarak. AZ'lerde yedek Crdir araligi birakilabilir muhtemel yeni Subnet acilmasina karsi.
 - Internet Gateway: NAT ozelligi sayesinde AWS PUBLIC IP POOL'dan public IP alir. private-public ip degisimini saglar. Daha sonra VPC'ye attach edilir.
 - VPC CIDR IP POOL: private IP'leri tahsis eder.
+- Tek instance'a 5 tane sg baglanabilir.
 - her instance'in private IP'si olup istedigimize public IP verebiliriz. Bunlar da public Subnetlerdir.
 - Subnetlere internet gateway veya VPN gateway ile ulasilabilir. 
+- Her regionun default bir AZ'si bulunur.
 - Herbir VPC'ye bir internet gateway attach edilmeli. Internet gateway olmadan VPC uzerinden internete cikilamaz.
 - Root table: Subnetlere sec grouplar belirlenir. Security Groups'da ise instancelara rulelar belirliyorduk.
   - target : aradaki gateway veya local icin 
@@ -32,7 +34,8 @@ VPC olusturma:
 Internet Gateway Olusturma/Attach/Routes'e baglama:
 - Root table'lara atanarak VPC'nin internet cikisini saglar. 
 - NAT gorevi ustlenir.
-- Herbir igv yalniz bir VPC'ye baglanir.
+- Herbir igv yalniz bir VPC'ye baglanir. 
+- Privat subnetlerin olusturdugu gruba atanmaz.
 > Internet Gateways > Create Internet gateway > isim gir > create
 > Internet Gateways > Ilgili Internet gateway > action > attach > ilgili VPS > save
 > Root tables > Ilgili VPC > Routes (target: local) dahili gorusme > Edit routes > Add routes > Destination: 0.0.0.0/0 > Target: Internet gateway yazilir ve olusturdugumuz gateway secilir. > save
@@ -41,6 +44,7 @@ Subnet olusturma:
 - IPv4 CIDR blocklari VPC'ye tahsisli private IP'ler Subnet'lere paylastirilir. (10.7.1.0/24 - 10.7.2.0/24 - 10.7.4.0/24 ... vb)
 - Subnet uzerinden isimleri ile privat-public yazsak da root table uzerinden asil ayrim saglanir.
 > Subnets > create subnet > isim/VPC sec/AZ sec/IPv4 CIDR block  (ornek: 10.7.4.0/24) > create subnet
+- mxtoolbox.com 
 
 - Subnetleri Root Table'lara tanimlama: 
   - Her VPC olustugunda public route table'i da olusur. Private subnetler icin 2. bir route table gerekir VPC bazinda. 
@@ -49,7 +53,7 @@ Subnet olusturma:
   > Root table > public-rt > subnet associations > Edit subnet associations > public subnetleri sec > save
 
 - Modify auto assign IP settings:
-  - Otomatik olarak public IP alinmasini saglar.
+  - Otomatik olarak public IP alinmasini saglar. Public subnetlere yapilir.
   > Subnet > ilgili subnet > Actions > Modify autoassign IP > Public IP'ler tahsis edilir. 
 
 
@@ -170,7 +174,7 @@ endpoint.
 
 
 
-Privattaki Database'e Public'teki Instance'tan VSC ile Baglanma: 
+4.Privattaki Database'e Public'teki Instance'tan VSC ile Baglanma: 
 
 LAMP Stack (Linux Apache MySQL PHP):
 - Private Subnetteki db (MariaSQL) yuklu istance'in sg'sine Public'teki instance'in sg'si custom'dan secilerek yalniz bu instance ile irtibati saglanir. 
@@ -234,8 +238,10 @@ systemctl enable mariadb
 
 
 
-NACL ():
-- Sg'lerden farkli olarak stateless'dir. Hem innbound hem de outbound kurallari tanimlanir. Hem allow hem de deny yapilabilir. 
+5.NACL ():
+- Firewall of subnets. Bir veya birkac subnete attach edilebilir.
+- SH'ler instance tabanli iken NACL'lar subned-VPC tabanlidir.
+- Sg'lerden farkli olarak stateless'dir. Subnetlere giriste hem innbound hem de outbound kurallari tanimlanir. Hem allow hem de deny yapilabilir. 
 - Kendisine baglanan Subnetlerin tum trafigini etkiler. 
 - SG gibi extra bir guvenlik hizmeti. Daha cok malicious attacklere karsi bir IP veya araligini kisitlar.
 - VPC olusturulunca otomatik olarak Nacl'lar (allow all in and allow all out olarak) kurulur.
@@ -248,3 +254,5 @@ NACL ():
   > Create network ACL > VPC2 > create
   > Innbound > Edit > Add rule > rule: 100 / Type: 22 Destination: 0.0.0.0/0 (belirli bir IP araligi belki sg olabilir) 
   > Outbound > Edit > Add rule > rule: 100 / Type: 22 Destination: 0.0.0.0/0 (belirli bir IP araligi belki sg olabilir) 
+
+> Route table'a ilistiriliyor mu kontrol et.

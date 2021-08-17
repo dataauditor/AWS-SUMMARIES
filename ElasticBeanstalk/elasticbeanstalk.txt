@@ -6,6 +6,7 @@
 - Lambda, serverlessdir ve Function as a servistir (FAAS). Beanstalk serverlidir.
 - EC2 gibi bir compute servistir.
 - Ruby, python, php, Go, java SE .net ... vb. dilleri desteklenir.
+- Bilgisayarda yuklenebilecegi gibi S3'ten de zipli application dosyasi yuklenebilir.
 - Kodunuzu yukleyince cloudformation alt yapisini kullanarak resourcelari ayaga kaldirir. 
 - Environmentte monitoring yapar, versiyoning yapar, health check yapar ve log kayitlarini tutar.
 - Konseptleri:
@@ -26,13 +27,16 @@
 
 
 2.Hands on:
+- (08_14_2021)
+
 Application Olusturma:
-- Environment olusur.
-> Beanstalk > create aplication > name: / tag: / platform: php / vers / upload your code / local file / choose file: zipli dosyayi seceriz > create application (environment olusturuyor aws)
+- Environment (tum resourcelar) olusur. Bu sekilde islem tamamdir.
+> Beanstalk > create aplication > name: / tag: / platform: php / upload your code / local file / choose file: zipli dosyayi seceriz > create application
 
 Application-env:
-> Applicationumuz-env 
-  > Events (hata, uyari, islem bazinda bakilabilir)
+- Ilgili environmente yonelik alarm ,event, configurasyon vb islemler icin kullanilir.
+> Application-env 
+  > Events : hata, uyari, islem bazinda bakilabilir
   > Alarms : planli alarmlar
   > Managed updates: planli updateler
   > Health : Statsunu gosterir. "ok"
@@ -40,22 +44,37 @@ Application-env:
   > Configuration: tum yazilim, instances ... edit edilebilir. ASG uzerinden edit ederek yeni instance acilabilir.
 
 Calisan Applikasyona Resource degisikligi:
-> application-env > configuration > capacity > edit > instance sayisi/cesidi/... atirilir > save
+> Application-env > configuration > capacity > edit > instance sayisi/cesidi/... atirilir > save
+
+Endpoint:
+Application > URL > browserdan ilgili sayfa acilir.
+
+SSH ile ulasim:
+- Application env'den key pair tanimlanarak ec2'ya girilir.
+> Application env > Configuration > Security > Edit > key pair sec > apply
+
+Update application:
+- Applicationu guncellemek icin kullanilir.
+Application-env > upload and deploy
 
 Versiyonlama:
 - Yeni versiyonu yuklersek (versiyon olarak) ayni resourcelari kullanarak ek programlari yukler.
+- yeni versiyon yuklerken isme 1, 2 seklinde versiyon numarasi ekler.
 > Application versions > upload > isim ver v2 > zipli yeni dosyayi upload et 
 > yeni versiyonu sec > Actions > deploy 
-> Applicationum-env > yeni versiyon environmenti almis (eski versiyon durmus.)
+> Application-env > yeni versiyon environmenti almis (eski versiyon durmus.)
 
 Restore Environment:
-- Application silinmezse environment silinse bile restore environment yapilabilir.
-> Environments > Actions > Terminate environment
+- Application silmezsek environment silinse bile environment restore yapilabilir.
+> Environments > Ilgili environment > Actions > Terminate environment
 > Applications > Actions > Restore terminated environment
  
+Application Silme:
+> Applications > ilgili application > Actions > Delete application
 
-
-
+Resource Kontrolu:
+- Application silinince S3 haric acilan tum resourcelar otomatik silinir.
+- Bucketi silmek icin Bucket policy'i silmelisiniz.
 
 
 
